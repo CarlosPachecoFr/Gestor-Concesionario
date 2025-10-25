@@ -37,7 +37,11 @@ export class DatosCochesService {
     return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-tarjetas`);
   }
 
-  obtenerDatosGraficos() {
-    return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-graficos`)
+  obtenerDatosGraficosVentasMes() {
+    return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-graficos-ventas-mes`)
+  }
+
+  obtenerDatosGraficosStockMarca() {
+    return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-graficos-stock-marca`)
   }
 }

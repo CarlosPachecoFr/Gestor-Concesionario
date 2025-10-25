@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NgApexchartsModule, ApexAxisChartSeries, ApexChart, ApexXAxis, ApexTitleSubtitle, ApexResponsive, ApexStroke, ApexFill, ApexYAxis, ApexGrid } from 'ng-apexcharts';
+import { NgApexchartsModule, ApexAxisChartSeries, ApexChart, ApexXAxis, ApexTitleSubtitle, ApexResponsive, ApexStroke, ApexFill, ApexYAxis, ApexGrid, ApexMarkers, ApexTooltip, ApexDataLabels, ApexPlotOptions } from 'ng-apexcharts';
 import { DatosCochesService } from '../../../services/datos-coches.service';
 
 export type ChartOptions = {
@@ -15,6 +15,21 @@ export type ChartOptions = {
   fill: ApexFill;
 };
 
+export type BarChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  plotOptions: ApexPlotOptions;
+  xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
+  title: ApexTitleSubtitle;
+  subtitle: ApexTitleSubtitle;
+  stroke: ApexStroke;
+  markers: ApexMarkers;
+  grid: ApexGrid;
+  tooltip: ApexTooltip;
+  dataLabels: ApexDataLabels;
+};
+
 @Component({
   selector: 'app-graficas-de-datos',
   imports: [NgApexchartsModule],
@@ -23,17 +38,19 @@ export type ChartOptions = {
 })
 export class GraficasDeDatosComponent {
   public chartOptions!: ChartOptions;
+  public barChartOptions!: BarChartOptions;
 
   constructor(private datosCochesService: DatosCochesService) {}
 
   ngOnInit() {
     this.cargarDatosArea();
+    this.cargarDatosBarras();
   }
 
   cargarDatosArea() {
-    this.datosCochesService.obtenerDatosGraficos().subscribe(data => {
+    this.datosCochesService.obtenerDatosGraficosVentasMes().subscribe(data => {
       const meses = data.map((item: any) => item.mes);
-    const ventas = data.map((item: any) => item.vendidos);
+      const ventas = data.map((item: any) => item.vendidos);
 
       this.chartOptions = {
         series: [
@@ -72,7 +89,7 @@ export class GraficasDeDatosComponent {
           text: 'Evolución de ventas en los últimos 6 meses',
           align: 'left',
           floating: false,
-          offsetY: 35,         // posición debajo del título
+          offsetY: 35,
           style: { fontSize: '14px', fontWeight: 'normal', color: '#A1A1A1' }
         },
         xaxis: {
@@ -99,6 +116,49 @@ export class GraficasDeDatosComponent {
           }
         ]
       };
+    })
+  }
+
+  cargarDatosBarras() {
+    this.datosCochesService.obtenerDatosGraficosStockMarca().subscribe(data => {
+      const marcas = data.map((item: any) => item.marca);
+      const stock = data.map((item: any) => item.stock);
+
+      this.barChartOptions = {
+      series: [{
+        name: 'Stock',
+        data: stock,
+        color: '#3B82F6'
+      }],
+      chart: {
+        type: 'bar',
+        height: 400,
+        toolbar: { show: false },
+        background: 'transparent',
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 6,
+          horizontal: false,
+        },
+      },
+      dataLabels: { enabled: false },
+      tooltip: {
+        y: {
+          formatter: (value: number) => `${value}`
+        }
+      },
+      grid: { show: false },
+      xaxis: {
+        categories: marcas,
+        labels: { style: { colors: '#FFFFFF', fontSize: '14px' } }
+      },
+      yaxis: { labels: { style: { colors: '#FFFFFF', fontSize: '14px' } } },
+      stroke: { show: true, width: 0 },
+      markers: { size: 0 },
+      title: { text: 'Stock por Marca', style: { fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF' } },
+      subtitle: { text: 'Distribución actual del inventario', align: 'left', style: { fontSize: '14px', color: '#A1A1A1', fontWeight: 'normal' } }
+    };
 
 
     })
