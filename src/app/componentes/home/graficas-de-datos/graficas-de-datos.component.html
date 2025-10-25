@@ -1,1 +1,23 @@
-<p>graficas-de-datos works!</p>
+<section class="mx-5 lg:mx-40 my-10">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-[#1E1E1E] border-[#2A2A2A] border-2 rounded-lg p-4 lg:col-span-2">
+            @if(chartOptions){
+                <apx-chart
+                    [series]="chartOptions.series"
+                    [chart]="chartOptions.chart"
+                    [xaxis]="chartOptions.xaxis"
+                    [yaxis]="chartOptions.yaxis"
+                    [grid]="chartOptions.grid"
+                    [title]="chartOptions.title"
+                    [subtitle]="chartOptions.subtitle"
+                    [responsive]="chartOptions.responsive"
+                    [stroke]="chartOptions.stroke"
+                    [fill]="chartOptions.fill">
+                </apx-chart>
+            }
+        </div>
+        <div class="bg-[#1E1E1E] border-[#2A2A2A] border-2 rounded-lg p-4">
+            
+        </div>
+    </div>
+</section>

@@ -47,7 +47,7 @@ export class TarjetasDatosComponent {
   }
 
   cargarDatosCoches(){
-    this.datosCochesService.obtenerCochesEnStock().subscribe(datos => {
+    this.datosCochesService.obtenerDatosTarjetas().subscribe(datos => {
       if (Array.isArray(datos) && datos.length > 0) {
       this.tarjetasCoches[0].dato = datos[0].total_coches;
       this.tarjetasCoches[0].subDato = `+${datos[1].añadidos_esta_semana} esta semana`;

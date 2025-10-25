@@ -33,7 +33,11 @@ export class DatosCochesService {
 
   constructor(private http: HttpClient) { }
 
-  obtenerCochesEnStock() {
-    return this.http.get<any[]>(`${this.apiUrl}?estado=Disponible`);
+  obtenerDatosTarjetas() {
+    return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-tarjetas`);
+  }
+
+  obtenerDatosGraficos() {
+    return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-graficos`)
   }
 }
