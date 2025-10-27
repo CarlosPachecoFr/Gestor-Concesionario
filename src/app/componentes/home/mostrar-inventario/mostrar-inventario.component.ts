@@ -11,6 +11,8 @@ import { DatosCochesService } from '../../../services/datos-coches.service';
 export class MostrarInventarioComponent {
 
   marcas: string[] = [];
+  coches: any[] = [];
+  cochesFiltrados: any[] = [];
   formularioBusqueda: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private datosCochesService: DatosCochesService) {
@@ -24,6 +26,10 @@ export class MostrarInventarioComponent {
 
   ngOnInit() {
     this.obtenerMarcas();
+    this.obtenerCoches();
+    this.formularioBusqueda.valueChanges.subscribe(() => {
+      this.filtrarCoches();
+    });
   }
 
   obtenerMarcas() {
@@ -31,4 +37,48 @@ export class MostrarInventarioComponent {
       this.marcas = datos.map(dato => dato.marca).filter((valor, indice, self) => self.indexOf(valor) === indice);
     })
   }
+
+  obtenerCoches() {
+    this.datosCochesService.obtenerInventario().subscribe(datos => {
+      this.coches = datos;
+      this.cochesFiltrados = datos;
+    });
+  }
+
+  filtrarCoches() {
+    const { textoBusqueda, marca, estado, precio } = this.formularioBusqueda.value;
+
+    this.cochesFiltrados = this.coches.filter(coche => {
+    const coincideTexto =
+      !textoBusqueda ||
+      coche.modelo.toLowerCase().includes(textoBusqueda.toLowerCase());
+
+    const coincideMarca =
+      marca === 'todasMarcas' || coche.marca === marca;
+
+    const coincideEstado =
+      estado === 'todosEstados' || coche.estado === estado;
+
+    let coincidePrecio = true;
+    switch (precio) {
+      case 'Bajo':
+        coincidePrecio = coche.precio < 20000;
+        break;
+      case 'MedioBajo':
+        coincidePrecio = coche.precio >= 20000 && coche.precio < 40000;
+        break;
+      case 'MedioAlto':
+        coincidePrecio = coche.precio >= 40000 && coche.precio < 60000;
+        break;
+      case 'Alto':
+        coincidePrecio = coche.precio >= 60000;
+        break;
+    }
+
+    return coincideTexto && coincideMarca && coincideEstado && coincidePrecio;
+  });
+
+
+  }
+
 }
