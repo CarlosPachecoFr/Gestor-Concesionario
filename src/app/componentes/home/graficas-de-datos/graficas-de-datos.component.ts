@@ -83,13 +83,12 @@ export class GraficasDeDatosComponent {
         },
         title: {
           text: 'Ventas Mensuales',
-          style: { fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF' }
+          style: { fontSize: '16px', fontWeight: 'bold', color: '#FFFFFF' }
         },
         subtitle: {
           text: 'Evolución de ventas en los últimos 6 meses',
           align: 'left',
           floating: false,
-          offsetY: 35,
           style: { fontSize: '14px', fontWeight: 'normal', color: '#A1A1A1' }
         },
         xaxis: {
@@ -156,7 +155,7 @@ export class GraficasDeDatosComponent {
       yaxis: { labels: { style: { colors: '#FFFFFF', fontSize: '14px' } } },
       stroke: { show: true, width: 0 },
       markers: { size: 0 },
-      title: { text: 'Stock por Marca', style: { fontSize: '20px', fontWeight: 'bold', color: '#FFFFFF' } },
+      title: { text: 'Stock por Marca', style: { fontSize: '16px', fontWeight: 'bold', color: '#FFFFFF' } },
       subtitle: { text: 'Distribución actual del inventario', align: 'left', style: { fontSize: '14px', color: '#A1A1A1', fontWeight: 'normal' } }
     };
 

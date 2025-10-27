@@ -44,4 +44,8 @@ export class DatosCochesService {
   obtenerDatosGraficosStockMarca() {
     return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-graficos-stock-marca`)
   }
+
+  obtenerDatosBusqueda() {
+    return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-busqueda`);
+  }
 }
