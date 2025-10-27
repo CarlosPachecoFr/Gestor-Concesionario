@@ -16,6 +16,9 @@ export class MostrarInventarioComponent {
   constructor(private formBuilder: FormBuilder, private datosCochesService: DatosCochesService) {
     this.formularioBusqueda = this.formBuilder.group({
       textoBusqueda: [''],
+      marca: ['todasMarcas'],
+      estado: ['todosEstados'],
+      precio: ['todosPrecios']
     })
   }
 

@@ -48,4 +48,12 @@ export class DatosCochesService {
   obtenerDatosBusqueda() {
     return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-busqueda`);
   }
+
+  obtenerInventario(marca?: string, estado?: string, precio?: string) {
+    const params: any = {};
+    if (marca && marca != "todasMarcas") params.marca = marca;
+    if (estado && estado != "todosEstados") params.estado = estado;
+    if (precio && precio != "todosPrecios") params.precio = precio;
+    return this.http.get<any[]>(`${this.apiUrl}/obtener-inventario`, { params })
+  }
 }
