@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatosCochesService } from '../../../services/datos-coches.service';
 import { CommonModule } from '@angular/common';
+import { ModalEditarComponent } from "../../modales/modal-editar/modal-editar.component";
 
 @Component({
   selector: 'app-mostrar-inventario',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, ModalEditarComponent],
   templateUrl: './mostrar-inventario.component.html',
   styleUrl: './mostrar-inventario.component.css'
 })
@@ -14,6 +15,7 @@ export class MostrarInventarioComponent {
   marcas: string[] = [];
   coches: any[] = [];
   cochesFiltrados: any[] = [];
+  mostrarModalEditar: boolean = false;
   formularioBusqueda: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private datosCochesService: DatosCochesService) {
@@ -95,5 +97,14 @@ export class MostrarInventarioComponent {
         this.filtrarCoches();
       },
     });
+  }
+
+  abrirModal(id: number) {
+    this.mostrarModalEditar = true;
+    localStorage.setItem('idCoche', id.toString());
+  }
+
+  onCerrarModal(valor: boolean) {
+    this.mostrarModalEditar = valor;
   }
 }

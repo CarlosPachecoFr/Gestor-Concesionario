@@ -63,4 +63,8 @@ export class DatosCochesService {
   eliminarCoche(id: number) {
     return this.http.delete(`${this.apiUrl}/f0ad9c2d-e216-47bc-82a0-4a6101986a4c/eliminar-coche/${id}`);
   }
+
+  editarCoche(id: string, coche: Coche) {
+    return this.http.put(`${this.apiUrl}/7dfe20ec-d91d-4e87-8cef-ba02f3fd1334/editar-coche/${id}`, coche);
+  }
 }

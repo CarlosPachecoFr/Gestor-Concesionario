@@ -10,5 +10,5 @@ import { MostrarInventarioComponent } from "../../componentes/home/mostrar-inven
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-
+  
 }

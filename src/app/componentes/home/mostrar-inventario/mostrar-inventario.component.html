@@ -76,7 +76,7 @@
                                 <p class="text-white">Ver en detalle</p>
                             </button>
                             <div class="grid grid-cols-4 gap-2">
-                                <button class="col-span-3 flex items-center justify-center gap-2 font-semibold border-2 border-[#2A2A2A] p-1 rounded-lg mt-2 hover:bg-[#2e2e2e] ease-in-out duration-200">
+                                <button (click)="abrirModal(coche.id)" class="col-span-3 flex items-center justify-center gap-2 font-semibold border-2 border-[#2A2A2A] p-1 rounded-lg mt-2 hover:bg-[#2e2e2e] ease-in-out duration-200">
                                     <img class="w-5 h-5" src="/assets/icons/editar.svg" alt="">
                                     <p class="text-white">Editar</p>
                                 </button>
@@ -101,4 +101,7 @@
             }
         </div>
     </div>
+    @if(mostrarModalEditar) {
+        <app-modal-editar (cerrarModal)="onCerrarModal($event)" />
+    }
 </section>
