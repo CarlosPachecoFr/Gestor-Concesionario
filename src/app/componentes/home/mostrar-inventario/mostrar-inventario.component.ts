@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatosCochesService } from '../../../services/datos-coches.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-mostrar-inventario',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './mostrar-inventario.component.html',
   styleUrl: './mostrar-inventario.component.css'
 })
@@ -25,10 +26,17 @@ export class MostrarInventarioComponent {
   }
 
   ngOnInit() {
-    this.obtenerMarcas();
     this.obtenerCoches();
+    this.obtenerMarcas();
     this.formularioBusqueda.valueChanges.subscribe(() => {
-      this.filtrarCoches();
+        this.filtrarCoches();
+    });
+    this.datosCochesService.datosActualizados$.subscribe(() => {
+      this.obtenerMarcas();
+      this.obtenerCoches();
+      this.formularioBusqueda.valueChanges.subscribe(() => {
+        this.filtrarCoches();
+      });
     });
   }
 
@@ -77,8 +85,15 @@ export class MostrarInventarioComponent {
 
     return coincideTexto && coincideMarca && coincideEstado && coincidePrecio;
   });
-
-
   }
 
+  eliminarCoche(id: number) {
+    this.datosCochesService.notificarCambio();
+    this.datosCochesService.eliminarCoche(id).subscribe({
+      next: () => {
+        this.coches = this.coches.filter(coche => coche.id !== id);
+        this.filtrarCoches();
+      },
+    });
+  }
 }

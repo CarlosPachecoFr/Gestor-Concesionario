@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { Subject } from 'rxjs';
 
 export interface Coche {
   id: number,
@@ -30,8 +31,14 @@ export interface Coche {
 export class DatosCochesService {
 
   private apiUrl = environment.apiUrl;
+  private datosActualizados = new Subject<void>();
+  datosActualizados$ = this.datosActualizados.asObservable();
 
   constructor(private http: HttpClient) { }
+
+  notificarCambio() {
+    this.datosActualizados.next();
+  }
 
   obtenerDatosTarjetas() {
     return this.http.get<any[]>(`${this.apiUrl}/obtener-datos-tarjetas`);
@@ -51,5 +58,9 @@ export class DatosCochesService {
 
   obtenerInventario() {
     return this.http.get<any[]>(`${this.apiUrl}/obtener-inventario`);
+  }
+
+  eliminarCoche(id: number) {
+    return this.http.delete(`${this.apiUrl}/f0ad9c2d-e216-47bc-82a0-4a6101986a4c/eliminar-coche/${id}`);
   }
 }

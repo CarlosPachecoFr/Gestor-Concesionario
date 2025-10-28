@@ -48,8 +48,17 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @for(coche of cochesFiltrados; track coche.id) {
                 <div class="bg-[#1E1E1E] border-[#2A2A2A] border-2 rounded-lg">
-                    <div>
-                        <img class="rounded-t-lg" [src]="coche.img_url" alt="">
+                    <div class="relative w-full h-48 overflow-hidden">
+                        <img class="rounded-t-lg w-full h-full object-cover" [src]="coche.img_url" alt="">
+                        <div class="absolute top-2 left-2">
+                            @if(coche.estado === 'Disponible') {
+                                <div class="bg-[#10B981] text-white text-xs font-semibold px-2 py-1 rounded-lg">Disponible</div>
+                            } @else if(coche.estado === 'Vendido') {
+                                <div class="bg-[#EF4444] text-white text-xs font-semibold px-2 py-1 rounded-lg">Vendido</div>
+                            } @else if(coche.estado === 'Reservado') {
+                                <div class="bg-[#F59E0B] text-white text-xs font-semibold px-2 py-1 rounded-lg">Reservado</div>
+                            }
+                        </div>
                     </div>
                     <div class="p-4">
                         <div>
@@ -57,7 +66,7 @@
                             <p class="text-[#FFFFFF] font-semibold text-xl">{{ coche.modelo }}</p>
                             <div class="text-[#A1A1A1] flex justify-between w-full my-3">
                                 <p>{{ coche.anio }}</p>
-                                <p>{{ coche.kilometraje }}</p>
+                                <p>{{ coche.kilometraje | number:'1.0-0' }} km</p>
                             </div>
                             <p class="text-[#FFFFFF] font-bold text-2xl">€{{ coche.precio }}</p>
                         </div>
@@ -71,7 +80,7 @@
                                     <img class="w-5 h-5" src="/assets/icons/editar.svg" alt="">
                                     <p class="text-white">Editar</p>
                                 </button>
-                                <button class="col-span-1 flex items-center justify-center gap-2 border-2 border-[#EF4444] p-1 rounded-lg mt-2 hover:bg-[#EF4444] ease-in-out duration-200 group">
+                                <button (click)="eliminarCoche(coche.id)" class="col-span-1 flex items-center justify-center gap-2 border-2 border-[#EF4444] p-1 rounded-lg mt-2 hover:bg-[#EF4444] ease-in-out duration-200 group">
                                     <svg 
                                         class="w-5 h-5 text-[#EF4444] group-hover:text-white" 
                                         viewBox="0 0 24 24" 

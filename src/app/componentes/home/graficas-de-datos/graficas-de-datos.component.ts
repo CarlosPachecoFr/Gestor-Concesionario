@@ -45,6 +45,10 @@ export class GraficasDeDatosComponent {
   ngOnInit() {
     this.cargarDatosArea();
     this.cargarDatosBarras();
+    this.datosCochesService.datosActualizados$.subscribe(() => {
+      this.cargarDatosArea();
+      this.cargarDatosBarras();
+    });
   }
 
   cargarDatosArea() {

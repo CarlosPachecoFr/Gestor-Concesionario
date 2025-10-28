@@ -44,6 +44,9 @@ export class TarjetasDatosComponent {
 
   ngOnInit() {
     this.cargarDatosCoches();
+    this.datosCochesService.datosActualizados$.subscribe(() => {
+      this.cargarDatosCoches();
+    });
   }
 
   cargarDatosCoches(){
