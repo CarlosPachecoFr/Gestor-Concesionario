@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { TarjetasDatosComponent } from "../../componentes/home/tarjetas-datos/tarjetas-datos.component";
 import { GraficasDeDatosComponent } from "../../componentes/home/graficas-de-datos/graficas-de-datos.component";
 import { MostrarInventarioComponent } from "../../componentes/home/mostrar-inventario/mostrar-inventario.component";
+import { HeaderComponent } from "../../componentes/comunes/header/header.component";
 
 @Component({
   selector: 'app-home',
-  imports: [TarjetasDatosComponent, GraficasDeDatosComponent, MostrarInventarioComponent],
+  imports: [TarjetasDatosComponent, GraficasDeDatosComponent, MostrarInventarioComponent, HeaderComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
