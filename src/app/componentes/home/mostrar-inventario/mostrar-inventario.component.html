@@ -6,6 +6,18 @@
                 <p class="font-semibold text-[#FFFFFF]">Inventario</p>
             </button>
         </div>
+        <div class="mt-5 md:flex md:justify-between">
+            <div>
+                <p class="text-white text-2xl font-bold">Inventario de Vehículos</p>
+                <p class="text-[#A1A1A1]">Gestiona todos los coches de tu concesionario</p>
+            </div>
+            <div class="mt-4">
+                <button (click)="abrirModalAniadir()" class="bg-[#3B82F6] rounded-lg p-1 flex items-center gap-2">
+                    <img class="w-5 h-5" src="/assets/icons/mas.svg" alt="">
+                    <p class="text-white font-semibold">Añadir Coche</p>
+                </button>
+            </div>
+        </div>
         <div class="bg-[#1E1E1E] border-[#2A2A2A] border-2 rounded-lg my-5 p-4">
             <div>
                 <p class="text-[#FFFFFF] font-semibold">Filtros de Búsqueda</p>
@@ -76,7 +88,7 @@
                                 <p class="text-white">Ver en detalle</p>
                             </button>
                             <div class="grid grid-cols-4 gap-2">
-                                <button (click)="abrirModal(coche.id)" class="col-span-3 flex items-center justify-center gap-2 font-semibold border-2 border-[#2A2A2A] p-1 rounded-lg mt-2 hover:bg-[#2e2e2e] ease-in-out duration-200">
+                                <button (click)="abrirModalEditar(coche.id)" class="col-span-3 flex items-center justify-center gap-2 font-semibold border-2 border-[#2A2A2A] p-1 rounded-lg mt-2 hover:bg-[#2e2e2e] ease-in-out duration-200">
                                     <img class="w-5 h-5" src="/assets/icons/editar.svg" alt="">
                                     <p class="text-white">Editar</p>
                                 </button>
@@ -102,6 +114,9 @@
         </div>
     </div>
     @if(mostrarModalEditar) {
-        <app-modal-editar (cerrarModal)="onCerrarModal($event)" />
+        <app-modal-editar (cerrarModal)="onCerrarModalEditar($event)" />
+    }
+    @if(mostrarModalAniadir) {
+        <app-modal-insertar (cerrarModal)="onCerrarModalAniadir($event)"/>
     }
 </section>

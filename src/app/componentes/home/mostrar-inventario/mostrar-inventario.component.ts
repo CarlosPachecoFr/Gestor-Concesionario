@@ -3,10 +3,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { DatosCochesService } from '../../../services/datos-coches.service';
 import { CommonModule } from '@angular/common';
 import { ModalEditarComponent } from "../../modales/modal-editar/modal-editar.component";
+import { ModalInsertarComponent } from "../../modales/modal-insertar/modal-insertar.component";
 
 @Component({
   selector: 'app-mostrar-inventario',
-  imports: [ReactiveFormsModule, CommonModule, ModalEditarComponent],
+  imports: [ReactiveFormsModule, CommonModule, ModalEditarComponent, ModalInsertarComponent],
   templateUrl: './mostrar-inventario.component.html',
   styleUrl: './mostrar-inventario.component.css'
 })
@@ -16,6 +17,7 @@ export class MostrarInventarioComponent {
   coches: any[] = [];
   cochesFiltrados: any[] = [];
   mostrarModalEditar: boolean = false;
+  mostrarModalAniadir: boolean = false;
   formularioBusqueda: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private datosCochesService: DatosCochesService) {
@@ -99,12 +101,20 @@ export class MostrarInventarioComponent {
     });
   }
 
-  abrirModal(id: number) {
+  abrirModalEditar(id: number) {
     this.mostrarModalEditar = true;
     localStorage.setItem('idCoche', id.toString());
   }
 
-  onCerrarModal(valor: boolean) {
+  onCerrarModalEditar(valor: boolean) {
     this.mostrarModalEditar = valor;
+  }
+
+  abrirModalAniadir() {
+    this.mostrarModalAniadir = true;
+  }
+
+  onCerrarModalAniadir(valor: boolean) {
+    this.mostrarModalAniadir = valor;
   }
 }

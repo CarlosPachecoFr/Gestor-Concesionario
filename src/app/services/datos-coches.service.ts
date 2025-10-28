@@ -67,4 +67,8 @@ export class DatosCochesService {
   editarCoche(id: string, coche: Coche) {
     return this.http.put(`${this.apiUrl}/7dfe20ec-d91d-4e87-8cef-ba02f3fd1334/editar-coche/${id}`, coche);
   }
+
+  insertarCoche(coche: Coche) {
+    return this.http.post(`${this.apiUrl}/añadir-coche/`, {coche});
+  }
 }
