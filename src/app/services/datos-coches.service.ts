@@ -22,7 +22,9 @@ export interface Coche {
   fecha_venta: Date,
   puertas: number,
   descripcion: string,
-  kilometraje: number
+  kilometraje: number,
+  transmision: string,
+  img_url: string
 }
 
 @Injectable({
@@ -70,5 +72,9 @@ export class DatosCochesService {
 
   insertarCoche(coche: Coche) {
     return this.http.post(`${this.apiUrl}/añadir-coche/`, {coche});
+  }
+
+  obtenerCocheId(id: number) {
+    return this.http.get<Coche>(`${this.apiUrl}/d9b7e712-561f-4430-ac75-6710f7307942/obtener-coche-id/${id}`);
   }
 }

@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DatosCochesService } from '../../../services/datos-coches.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-modal-editar',
@@ -32,10 +33,11 @@ export class ModalEditarComponent {
     { label: 'Puertas', control: 'puertas', type: 'number', placeholder: '5' },
     { label: 'Descripción', control: 'descripcion', type: 'text', placeholder: 'Coche en excelente estado' },
     { label: 'Kilometraje', control: 'kilometraje', type: 'number', placeholder: '15000' },
+    { label: 'Transmisión', control: 'transmision', type: 'text', placeholder: 'Automático' },
     { label: 'Imagen URL', control: 'img_url', type: 'text', placeholder: 'http://imagen.com/coche.jpg' }
   ];
 
-  constructor(private formBuilder: FormBuilder, private datosCochesService: DatosCochesService) {
+  constructor(private formBuilder: FormBuilder, private datosCochesService: DatosCochesService, private route: ActivatedRoute) {
     this.formularioEditar = this.formBuilder.group({
       marca: [''],
       modelo: [''],
@@ -55,7 +57,8 @@ export class ModalEditarComponent {
       puertas: [''],
       descripcion: [''],
       kilometraje: [''],
-      img_url: ['']
+      transmision: [''],
+      img_url: [''],
     });
   }
 
@@ -64,7 +67,7 @@ export class ModalEditarComponent {
   }
 
   editarCoche() {
-    const id = localStorage.getItem('idCoche');
+    const id = localStorage.getItem('idCoche') || localStorage.getItem('idCoche2');
     this.datosCochesService.editarCoche(id ? id : '', this.formularioEditar.value).subscribe(() => {
       this.onCerrar();
       this.datosCochesService.notificarCambio();

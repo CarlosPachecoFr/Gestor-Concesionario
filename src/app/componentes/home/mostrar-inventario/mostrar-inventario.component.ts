@@ -4,6 +4,7 @@ import { DatosCochesService } from '../../../services/datos-coches.service';
 import { CommonModule } from '@angular/common';
 import { ModalEditarComponent } from "../../modales/modal-editar/modal-editar.component";
 import { ModalInsertarComponent } from "../../modales/modal-insertar/modal-insertar.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-mostrar-inventario',
@@ -20,7 +21,7 @@ export class MostrarInventarioComponent {
   mostrarModalAniadir: boolean = false;
   formularioBusqueda: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private datosCochesService: DatosCochesService) {
+  constructor(private formBuilder: FormBuilder, private datosCochesService: DatosCochesService, private router: Router) {
     this.formularioBusqueda = this.formBuilder.group({
       textoBusqueda: [''],
       marca: ['todasMarcas'],
@@ -116,5 +117,9 @@ export class MostrarInventarioComponent {
 
   onCerrarModalAniadir(valor: boolean) {
     this.mostrarModalAniadir = valor;
+  }
+
+  verInfoCoche(id: number) {
+    this.router.navigate(['/detalles-coche', id]);
   }
 }

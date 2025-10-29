@@ -1,0 +1,74 @@
+<section class="mx-5 lg:mx-40 my-5">
+    <div>
+        <button (click)="volverAInicio()" class="border-[#2A2A2A] border-2 rounded-lg p-2 flex gap-2 items-center">
+            <img class="w-5 h-5" src="/assets/icons/flechaIzq.svg" alt="">
+            <p class="text-white">Volver al dashboard</p>
+        </button>
+    </div>
+    <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-4">
+        <div class="bg-[#1E1E1E] border-2 border-[rgb(42,42,42)] rounded-lg lg:col-span-3">
+            <img class="rounded-t-lg w-full lg:h-[450px] object-cover" [src]="coche.img_url" alt="">
+            <div class="p-5 lg:p-7">
+                <div>
+                    <p class="text-[#A1A1A1] text-lg">{{ coche.marca }}</p>
+                    <p class="text-white text-3xl font-bold">{{ coche.modelo }}</p>
+                </div>
+                <div class="my-4">
+                    <p class="text-white text-3xl font-bold">€{{ coche.precio }}</p>
+                </div>
+                <div>
+                    <p class="text-[#A1A1A1] text-lg text-justify break-words">{{ coche.descripcion }}</p>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
+                    @for (dato of datos1; track dato.id) {
+                        <div class="bg-[#2A2A2A] rounded-lg flex items-center p-2 lg:p-5 gap-2 lg:gap-5">
+                            <img class="w-5 h-5" [src]="dato.img" alt="">
+                            <div>
+                                <p class="text-[#A1A1A1]">{{ dato.p1 }}</p>
+                                <p class="text-white font-semibold">{{ dato.p2 }}</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="bg-[#2A2A2A] rounded-lg mt-5 p-3 lg:p-5">
+                    <p class="text-white font-semibold mb-5 text-lg">Escpecificaciones</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                       @for(dato of datos2; track dato.id) {
+                            <div class="flex justify-between">
+                                <p class="text-[#A1A1A1]">{{ dato.p1 }}</p>
+                                <p class="text-white font-semibold">{{ dato.p2 }}</p>
+                            </div>
+                       }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-[#1E1E1E] border-2 border-[#2A2A2A] rounded-lg p-5 lg:h-44 lg:col-span-1 lg:sticky top-5">
+            <p class="text-white font-semibold mb-5 text-lg">Acciones</p>
+            <div>
+                <button (click)="abrirModalEditar()" class="w-full flex text-white font-semibold items-center justify-center p-1 bg-[#3B82F6] rounded-lg hover:bg-[#2277ff] ease-in-out duration-200">
+                    <img class="w-5 h-5" src="/assets/icons/editar.svg" alt="">
+                    <p>Editar información</p>
+                </button>
+                <button (click)="eliminarCoche()" class="w-full flex items-center justify-center gap-2 border-2 border-[#EF4444] p-1 rounded-lg mt-2 hover:bg-[#EF4444] ease-in-out duration-200 group">
+                    <svg 
+                        class="w-5 h-5 text-[#EF4444] group-hover:text-white" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                    <path d="M10 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M14 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M4 7H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <p class="text-[#EF4444] group-hover:text-white">Eliminar  Coche</p>
+                </button>
+            </div>
+        </div>
+    </div>
+    @if(mostrarModalEditar) {
+        <app-modal-editar (cerrarModal)="onCerrarModalEditar($event)" />
+    }
+</section>

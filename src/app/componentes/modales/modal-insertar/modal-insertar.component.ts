@@ -30,6 +30,7 @@ export class ModalInsertarComponent {
     { label: 'Puertas', control: 'puertas', type: 'number', placeholder: '5' },
     { label: 'Descripción', control: 'descripcion', type: 'text', placeholder: 'Coche en excelente estado' },
     { label: 'Kilometraje', control: 'kilometraje', type: 'number', placeholder: '15000' },
+    { label: 'Transmisión', control: 'transmision', type: 'text', placeholder: 'Automático' },
     { label: 'Imagen URL', control: 'img_url', type: 'text', placeholder: 'http://imagen.com/coche.jpg' }
   ];
 
@@ -51,6 +52,7 @@ export class ModalInsertarComponent {
       puertas: ['', Validators.required],
       descripcion: [''],
       kilometraje: ['', Validators.required],
+      transmision: ['', Validators.required],
       img_url: ['', Validators.required]
     });
   }
