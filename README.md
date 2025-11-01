@@ -121,8 +121,6 @@ Dashboard-Gestor-Concesionario/
 
 9. Activa los workflows para exponer los endpoints HTTP.
 
-10. Copia las URLs generadas y añádelas en src/environments/environment.ts para conectar el frontend con el backend.
-
 ---
 
 ## 🛡️ Seguridad
