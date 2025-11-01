@@ -1,0 +1,93 @@
+{
+  "name": "Endpoint Añadir Coche",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "añadir-coche",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        48,
+        -48
+      ],
+      "id": "5fbee0e6-0032-4113-8994-77e725c5061c",
+      "name": "Webhook",
+      "webhookId": "e7c7d51d-caed-4847-b429-530e8c1f74b3"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO coches (\n    marca,\n    modelo,\n    anio,\n    version,\n    tipo_carroceria,\n    motor,\n    cilindrada,\n    potencia_hp,\n    color,\n    precio,\n    fecha_llegada,\n    estado,\n    notas,\n    matricula,\n    puertas,\n    descripcion,\n    kilometraje,\n    img_url\n)\nVALUES (\n    '{{ $json.body.coche.marca }}',\n    '{{ $json.body.coche.modelo }}',\n    '{{ $json.body.coche.anio }}',\n    '{{ $json.body.coche.version }}',\n    '{{ $json.body.coche.tipo_carroceria }}',\n    '{{ $json.body.coche.motor }}',\n    '{{ $json.body.coche.cilindrada }}',\n    '{{ $json.body.coche.potencia }}',\n    '{{ $json.body.coche.color }}',\n    {{ $json.body.coche.precio }},\n    '{{ $json.body.coche.fecha_compra }}',\n    'Disponible',\n    ('{{ $json.body.coche.notas }}', ''),\n    '{{ $json.body.coche.matricula }}',\n    {{ $json.body.coche.puertas }},\n    ('{{ $json.body.coche.descripcion }}', ''),\n    {{ $json.body.coche.kilometraje }},\n    '{{ $json.body.coche.img_url }}'\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        256,
+        -48
+      ],
+      "id": "c8f0c7b5-6e1a-4a2d-a700-f1e7621725ec",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        464,
+        -48
+      ],
+      "id": "62a28251-c44f-4f44-abb0-bb4451bbb598",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f37e671a-3fbc-42f8-81e9-9b815a2b087c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "id": "XlvSDYSNyUP6n84y",
+  "tags": []
+}

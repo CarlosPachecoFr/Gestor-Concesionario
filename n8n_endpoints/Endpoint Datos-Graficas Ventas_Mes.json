@@ -1,0 +1,121 @@
+{
+  "name": "Endpoint Datos-Graficas Ventas/Mes",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "obtener-datos-graficos-ventas-mes",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        -80
+      ],
+      "id": "ba102fd7-9493-4ba2-872e-6686c771bad0",
+      "name": "Webhook",
+      "webhookId": "d657fb5d-c073-4e54-906b-8f531e98705a"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    TO_CHAR(fecha_venta, 'YYYY-MM') AS mes,\n    COUNT(*) AS coches_vendidos\nFROM coches\nWHERE estado = 'Vendido'\n  AND fecha_venta >= date_trunc('month', CURRENT_DATE) - INTERVAL '5 months'\nGROUP BY TO_CHAR(fecha_venta, 'YYYY-MM')\nORDER BY mes;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        144,
+        -80
+      ],
+      "id": "5c8b32b8-2bc8-47e7-a295-0d73a76db646",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Array de meses para mapear número -> nombre\nconst nombresMeses = [\n  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',\n  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'\n];\n\n// Tomamos los datos de entrada\nconst inputData = $input.all().map(item => {\n  const json = item.json || {};\n  return {\n    mes: json.mes,\n    vendidos: Number(json.coches_vendidos || 0) // <-- aquí usamos la propiedad correcta\n  };\n});\n\n// Transformamos\nconst outputData = inputData.map(item => {\n  const [year, monthStr] = item.mes.split('-');\n  const mesIndex = parseInt(monthStr, 10) - 1;\n\n  return {\n    json: {\n      mes: nombresMeses[mesIndex],\n      vendidos: item.vendidos\n    }\n  };\n});\n\nreturn outputData;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        -80
+      ],
+      "id": "16761a57-513e-4204-b658-b085b8c9d72f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        592,
+        -80
+      ],
+      "id": "97bc3744-91cd-43a3-9821-4413d6be4cdb",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0a012899-0f36-4a35-af87-7ea57eabd99a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "id": "v1MryrjbOlyWlp4e",
+  "tags": []
+}

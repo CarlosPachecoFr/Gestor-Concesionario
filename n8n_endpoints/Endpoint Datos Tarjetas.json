@@ -1,0 +1,501 @@
+{
+  "name": "Endpoint Datos Tarjetas",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1136,
+        352
+      ],
+      "id": "374a5313-44c1-4eb4-9f70-c791deff8591",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) AS total_coches\nFROM coches WHERE estado = 'Disponible';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        -144
+      ],
+      "id": "0384a5af-ecca-4331-8924-51e674caa014",
+      "name": "Obtener Coches en Stock",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) AS añadidos_esta_semana\nFROM coches\nWHERE DATE_TRUNC('week', fecha_llegada) = DATE_TRUNC('week', CURRENT_DATE);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1e4df7ea-8312-4db1-8f27-7f569aba590a",
+      "name": "Coches Vendidos Semana Actual",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) AS vendidos_mes_actual\nFROM coches\nWHERE estado = 'Vendido'\n  AND DATE_TRUNC('month', fecha_venta) = DATE_TRUNC('month', CURRENT_DATE);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        144
+      ],
+      "id": "61d47b71-0997-426d-859a-821f5eebb5b2",
+      "name": "Coches Vendidos este Mes",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) AS coches_vendidos_mes_anterior\nFROM coches\nWHERE estado = 'Vendido'\n  AND DATE_TRUNC('month', fecha_venta) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month');\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        288
+      ],
+      "id": "8d537590-98e5-4a7a-abbe-8ba8b19db180",
+      "name": "Coches Vendidos Mes Anterior",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aseguramos que haya al menos dos items\nif ($items().length < 2) {\n  return [{\n    json: { error: \"No hay suficientes datos para calcular el porcentaje.\" }\n  }];\n}\n\n// Tomamos los valores de los dos items\nconst vendidosActual = Number($items()[0].json.vendidos_mes_actual || $items()[0].json.total_vendidos || 0);\nconst vendidosAnterior = Number($items()[1].json.coches_vendidos_mes_anterior || $items()[1].json.total_vendidos || 0);\n\nlet porcentaje = null;\nlet mensajeCambio = null;\n\nif (vendidosAnterior > 0) {\n  porcentaje = ((vendidosActual - vendidosAnterior) / vendidosAnterior) * 100;\n  const signo = porcentaje >= 0 ? '+' : '-';\n  mensajeCambio = `${signo}${Math.abs(porcentaje.toFixed(2))}% vs mes anterior`;\n} else {\n  mensajeCambio = 'Sin datos del mes anterior';\n}\n\n// Devolvemos un solo objeto con todo\nreturn [{\n  json: {\n    mensaje_porcentaje_vs_mes_anterior: mensajeCambio\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        224
+      ],
+      "id": "2928a3f0-ff9a-48c6-a7ac-87b23adbde0b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        432,
+        224
+      ],
+      "id": "4221f87b-8535-4e30-89a5-d261a6bca811",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        560
+      ],
+      "id": "89ac25d9-12a3-46a7-950a-c4105bda2708",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aseguramos que haya al menos dos items\nif ($items().length < 2) {\n  return [{\n    json: { error: \"No hay suficientes datos para calcular el porcentaje de ingresos.\" }\n  }];\n}\n\n// Tomamos los valores de los dos items\nconst ingresosActual = Number($items()[0].json.ingresos_mes_actual || 0);\nconst ingresosAnterior = Number($items()[1].json.ingresos_mes_anterior || 0);\n\nlet porcentaje = null;\nlet mensajeCambio = null;\n\nif (ingresosAnterior > 0) {\n  porcentaje = ((ingresosActual - ingresosAnterior) / ingresosAnterior) * 100;\n  const signo = porcentaje >= 0 ? '+' : '-';\n  mensajeCambio = `${signo}${Math.abs(porcentaje.toFixed(2))}% vs mes anterior`;\n} else {\n  mensajeCambio = 'Sin datos del mes anterior';\n}\n\n// Devolvemos un solo objeto con todo\nreturn [{\n  json: {\n    mensaje_porcentaje_vs_mes_anterior: mensajeCambio\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        560
+      ],
+      "id": "2a68dfd6-2098-46a9-9b6f-34c6932596cb",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  SUM(precio) AS ingresos_mes_actual\nFROM coches\nWHERE estado = 'Vendido'\n  AND DATE_TRUNC('month', fecha_venta) = DATE_TRUNC('month', CURRENT_DATE);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        496
+      ],
+      "id": "97857012-0188-4dab-aa67-b95cc50e82f9",
+      "name": "Ingresos este Mes",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  SUM(precio) AS ingresos_mes_anterior\nFROM coches\nWHERE estado = 'Vendido'\n  AND DATE_TRUNC('month', fecha_venta) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        640
+      ],
+      "id": "5cc2ac93-349c-49ae-b9be-5595ff9ca22f",
+      "name": "Ingresos Mes Anterior",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select SUM(precio) as valor_inventario from coches where estado='Disponible'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        800
+      ],
+      "id": "590dcc20-2617-4bf7-84c8-4eb7866292fc",
+      "name": "Valor inventario",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        864
+      ],
+      "id": "14dc174a-6c50-414f-ba2e-0c9c04f082ea",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ingresosMesActual = Number($items()[0].json.ingresos_mes_actual || 0);\nconst valorInventario = Number($items()[1].json.valor_inventario || 0);\n\nlet porcentaje = null;\nlet mensaje = null;\n\nif (valorInventario > 0) {\n  porcentaje = (ingresosMesActual / valorInventario) * 100;\n  mensaje = `${porcentaje.toFixed(2)}% este mes`;\n} else {\n  mensaje = 'Valor de inventario no disponible';\n}\n\nreturn [{\n  json: {\n    mensaje_variacion_valor_inventario: mensaje\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        864
+      ],
+      "id": "ac7e0f20-6e85-4fc9-b717-08bf1c3bfb8a",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "path": "obtener-datos-tarjetas",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        288
+      ],
+      "id": "67a1f304-a83c-4455-80ed-38b99177cb85",
+      "name": "Webhook",
+      "webhookId": "66184718-67bd-4846-8aaf-cbed986845d1"
+    },
+    {
+      "parameters": {
+        "numberInputs": 8
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        928,
+        256
+      ],
+      "id": "b3845405-1462-4f00-9938-48d6004b5b5b",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Obtener Coches en Stock": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coches Vendidos Semana Actual": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Coches Vendidos este Mes": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Coches Vendidos Mes Anterior": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Ingresos este Mes": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Ingresos Mes Anterior": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Valor inventario": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Coches Vendidos Semana Actual",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Obtener Coches en Stock",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Coches Vendidos este Mes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Coches Vendidos Mes Anterior",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Ingresos este Mes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Ingresos Mes Anterior",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Valor inventario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "672dfda7-4a48-4b4a-b162-7281bfa21b61",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "id": "gs3GQnjrAmzOAAqQ",
+  "tags": []
+}

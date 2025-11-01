@@ -1,0 +1,92 @@
+{
+  "name": "Endpoint Ver Coche por Id",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "obtener-coche-id/:id",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b3c678de-5a6c-4197-b9c1-de1289d643f4",
+      "name": "Webhook",
+      "webhookId": "d9b7e712-561f-4430-ac75-6710f7307942"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM coches WHERE id = {{ $json.params.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ee334d75-1001-40db-9518-346c2fd4d9e9",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "71d642ab-6cc7-4aad-9ff4-addefd162376",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1bd7b5b1-cd6b-41e8-9e8c-504a729726c3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "id": "Ny58a71SU9lJtzWR",
+  "tags": []
+}

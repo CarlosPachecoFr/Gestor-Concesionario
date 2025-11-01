@@ -1,0 +1,93 @@
+{
+  "name": "Endpoint Eliminar Coche por Id",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "eliminar-coche/:id",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "03562866-eaf9-4499-9931-f94d032c065d",
+      "name": "Webhook",
+      "webhookId": "f0ad9c2d-e216-47bc-82a0-4a6101986a4c"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM coches Where id = {{ $json.params.id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1c663fb6-a7ac-4a3d-a7b3-185a3ab693a5",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        432,
+        0
+      ],
+      "id": "ebc8bdb9-3e17-4e5e-9f7a-4dad252d4adc",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "802a69d8-ac69-4d7e-8428-bd51395099fd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "id": "6wG41aJkv3P8HVef",
+  "tags": []
+}

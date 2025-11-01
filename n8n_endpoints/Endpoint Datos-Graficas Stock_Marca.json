@@ -1,0 +1,115 @@
+{
+  "name": "Endpoint Datos-Graficas Stock/Marca",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "obtener-datos-graficos-stock-marca",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        0
+      ],
+      "id": "a6118faa-1ef5-495a-9fb7-7af91e535a4e",
+      "name": "Webhook",
+      "webhookId": "8f3c2ae1-bb68-488b-a1dd-507d124689b7"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT marca, COUNT(*) AS stock\nFROM coches\nWHERE estado = 'Disponible'\nGROUP BY marca\nORDER BY stock DESC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        32,
+        0
+      ],
+      "id": "445683fe-4c80-4279-9798-382bdfb474df",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Número máximo de marcas individuales\nconst topN = 5;\n\n// Obtenemos todos los items y mapeamos a un array de objetos {marca, stock}\nconst allItems = $items().map(item => ({\n    marca: item.json.marca,\n    stock: Number(item.json.stock)\n}));\n\n// Ordenamos por stock descendente\nconst sorted = allItems.sort((a,b) => b.stock - a.stock);\n\n// Tomamos las top N\nconst top = sorted.slice(0, topN);\n\n// Sumamos el resto en \"Otros\"\nconst othersStock = sorted.slice(topN).reduce((sum, item) => sum + item.stock, 0);\n\nif (othersStock > 0) {\n    top.push({ marca: \"Otros\", stock: othersStock });\n}\n\n// Devolvemos el array final\nreturn top.map(item => ({ json: item }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "2a24c1ab-90d7-4008-84fd-a1c4b89a0adc",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "b6885646-40f1-480d-87c4-71444db5647e",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f2d6e65c-8587-4237-9e6c-12697d83a34d",
+  "meta": {
+    "instanceId": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "id": "L9bzUszlHsEZHCHt",
+  "tags": []
+}

@@ -1,0 +1,117 @@
+{
+  "name": "Endpoint Editar Coche",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "PUT",
+        "path": "editar-coche/:id",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -128,
+        0
+      ],
+      "id": "0a98f3e0-2528-402f-83d5-9bd1ec98b557",
+      "name": "Webhook",
+      "webhookId": "7dfe20ec-d91d-4e87-8cef-ba02f3fd1334"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $json.query }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2f823a5e-383e-43de-b7e6-599119f684b3",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "<TO_BE_CONFIGURED>",
+          "name": "To configure (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "713877c0-bf4e-40a1-b1a5-35a1df7745a0",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body;\nconst id = $json.params.id;\n\nlet setFields = [];\n\n// Función auxiliar para chequear si el valor es válido\nconst isValid = val => val !== undefined && val !== null && val !== '';\n\n// Solo agregamos campos válidos\nif (isValid(body.marca)) setFields.push(`marca = '${body.marca}'`);\nif (isValid(body.modelo)) setFields.push(`modelo = '${body.modelo}'`);\nif (isValid(body.anio)) setFields.push(`anio = '${body.anio}'`);\nif (isValid(body.version)) setFields.push(`version = '${body.version}'`);\nif (isValid(body.tipo_carroceria)) setFields.push(`tipo_carroceria = '${body.tipo_carroceria}'`);\nif (isValid(body.motor)) setFields.push(`motor = '${body.motor}'`);\nif (isValid(body.cilindrada)) setFields.push(`cilindrada = '${body.cilindrada}'`);\nif (isValid(body.potencia)) setFields.push(`potencia_hp = '${body.potencia}'`);\nif (isValid(body.color)) setFields.push(`color = '${body.color}'`);\nif (isValid(body.precio)) setFields.push(`precio = ${body.precio}`);\nif (isValid(body.fecha_compra)) setFields.push(`fecha_llegada = '${body.fecha_compra}'`);\nif (isValid(body.estado)) setFields.push(`estado = '${body.estado}'`);\nif (isValid(body.notas)) setFields.push(`notas = '${body.notas}'`);\nif (isValid(body.matricula)) setFields.push(`matricula = '${body.matricula}'`);\nif (isValid(body.fecha_venta)) setFields.push(`fecha_venta = '${body.fecha_venta}'`);\nif (isValid(body.puertas)) setFields.push(`puertas = ${body.puertas}`);\nif (isValid(body.descripcion)) setFields.push(`descripcion = '${body.descripcion}'`);\nif (isValid(body.kilometraje)) setFields.push(`kilometraje = ${body.kilometraje}`);\nif (isValid(body.img_url)) setFields.push(`img_url = '${body.img_url}'`);\nif (isValid(body.transmision)) setFields.push(`transmision = '${body.transmision}'`);\n\nif (setFields.length === 0) {\n  throw new Error(\"No hay campos válidos para actualizar\");\n}\n\nconst query = `UPDATE coches SET ${setFields.join(', ')} WHERE id = ${id};`;\n\nreturn { json: { query } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        0
+      ],
+      "id": "a5d719b9-0935-4b3e-a207-a03a510132e3",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "14d5533c-92c0-410f-9908-696ee4940327",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "id": "1pWqyKmqSMuS9jbG",
+  "tags": []
+}
